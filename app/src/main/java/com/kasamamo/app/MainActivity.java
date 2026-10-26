@@ -2,11 +2,13 @@
 package com.kasamamo.app;
 
 import android.app.Activity;
-import android.os.Bundle;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.Bundle;
+import android.text.InputType;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -20,20 +22,15 @@ import java.util.Locale;
 
 public class MainActivity extends Activity {
 
-    private LinearLayout root;
     private LinearLayout content;
     private String currentCategory = "";
-    private String searchText = "";
+    private String lastScreen = "home";
 
     private final List<Recipe> recipes = new ArrayList<>();
+    private final List<PriceEntry> prices = new ArrayList<>();
 
     private static class Recipe {
-        String category;
-        String name;
-        String time;
-        String ingredients;
-        String steps;
-        String tip;
+        String category, name, time, ingredients, steps, tip;
 
         Recipe(String category, String name, String time,
                String ingredients, String steps, String tip) {
@@ -43,6 +40,17 @@ public class MainActivity extends Activity {
             this.ingredients = ingredients;
             this.steps = steps;
             this.tip = tip;
+        }
+    }
+
+    private static class PriceEntry {
+        String item, store;
+        double price;
+
+        PriceEntry(String item, String store, double price) {
+            this.item = item;
+            this.store = store;
+            this.price = price;
         }
     }
 
@@ -56,276 +64,276 @@ public class MainActivity extends Activity {
     private void loadRecipes() {
         // FILIPINO CHICKEN
         add("Chicken", "Chicken Adobo", "45 minutes",
-                "Chicken, soy sauce, vinegar, garlic, onion, peppercorns, bay leaves, water.",
-                "1. Brown the chicken. 2. Add garlic, soy sauce, vinegar, pepper and bay leaves. 3. Add water and simmer until tender. 4. Reduce the sauce.",
-                "Adjust vinegar and soy sauce to your taste.");
+                "Chicken, soy sauce, vinegar, garlic, onion, pepper, bay leaves.",
+                "Brown chicken. Add garlic, soy sauce, vinegar, pepper and bay leaves. Add water and simmer until tender. Reduce the sauce.",
+                "Adjust vinegar and soy sauce to taste.");
 
         add("Chicken", "Chicken Tinola", "50 minutes",
-                "Chicken, green papaya or chayote, ginger, garlic, onion, malunggay or chili leaves, fish sauce, water.",
-                "1. Sauté ginger, garlic and onion. 2. Add chicken and fish sauce. 3. Add water and simmer. 4. Add papaya or chayote. 5. Add leaves near the end.",
+                "Chicken, ginger, garlic, onion, green papaya or sayote, malunggay or chili leaves, fish sauce, water.",
+                "Sauté ginger, garlic and onion. Add chicken and fish sauce. Add water and simmer. Add papaya or sayote. Add leaves near the end.",
                 "Serve hot with rice.");
 
         add("Chicken", "Chicken Afritada", "50 minutes",
-                "Chicken, tomato sauce, potatoes, carrots, bell pepper, onion, garlic, oil, water.",
-                "1. Brown chicken. 2. Sauté garlic and onion. 3. Add tomato sauce and water. 4. Simmer with potatoes and carrots. 5. Add bell pepper.",
-                "Cut vegetables into similar-sized pieces.");
+                "Chicken, tomato sauce, potatoes, carrots, bell pepper, onion, garlic, water.",
+                "Brown chicken. Sauté garlic and onion. Add tomato sauce and water. Simmer with potatoes and carrots. Add bell pepper.",
+                "Cut vegetables evenly.");
 
         add("Chicken", "Filipino Fried Chicken", "40 minutes",
-                "Chicken pieces, garlic, salt, pepper, calamansi or lemon, flour, cooking oil.",
-                "1. Season chicken with garlic, salt, pepper and calamansi. 2. Coat lightly with flour. 3. Fry over medium heat until fully cooked and golden.",
-                "Make sure chicken is cooked through.");
+                "Chicken, garlic, salt, pepper, calamansi, flour, cooking oil.",
+                "Season chicken with garlic, salt, pepper and calamansi. Coat lightly with flour. Fry until golden and fully cooked.",
+                "Make sure the center is fully cooked.");
 
         add("Chicken", "Chicken Inasal", "60 minutes",
                 "Chicken, calamansi, vinegar, garlic, ginger, lemongrass, annatto oil, salt, pepper.",
-                "1. Marinate chicken with calamansi, vinegar, garlic, ginger and seasonings. 2. Grill while turning. 3. Brush with annatto oil until cooked.",
-                "Serve with rice and calamansi dipping sauce.");
+                "Marinate chicken with seasonings. Grill while turning. Brush with annatto oil until cooked.",
+                "Serve with rice and calamansi.");
 
-        add("Chicken", "Filipino Chicken Curry", "50 minutes",
+        add("Chicken", "Chicken Curry", "50 minutes",
                 "Chicken, coconut milk, curry powder, potatoes, carrots, bell pepper, onion, garlic.",
-                "1. Sauté garlic and onion. 2. Brown chicken. 3. Add curry powder and water. 4. Simmer with potatoes and carrots. 5. Add coconut milk and bell pepper.",
+                "Sauté garlic and onion. Brown chicken. Add curry powder and water. Simmer with potatoes and carrots. Add coconut milk and bell pepper.",
                 "Keep the heat low after adding coconut milk.");
 
         // FILIPINO PORK
         add("Pork", "Pork Adobo", "60 minutes",
-                "Pork, soy sauce, vinegar, garlic, peppercorns, bay leaves, water.",
-                "1. Combine pork, soy sauce, garlic, pepper and bay leaves. 2. Simmer until tender. 3. Add vinegar and water. 4. Cook until the sauce reduces.",
-                "Let the pork simmer until tender.");
+                "Pork, soy sauce, vinegar, garlic, pepper, bay leaves, water.",
+                "Combine pork, soy sauce, garlic, pepper and bay leaves. Simmer until tender. Add vinegar and water. Cook until the sauce reduces.",
+                "Simmer until the pork is tender.");
 
         add("Pork", "Pork Sinigang", "60 minutes",
-                "Pork, tamarind soup base, tomato, onion, radish, eggplant, kangkong, fish sauce, water.",
-                "1. Boil pork until tender. 2. Add tomato and onion. 3. Add radish and other firm vegetables. 4. Add souring mix. 5. Add kangkong near the end.",
-                "Adjust the sourness to your preference.");
+                "Pork, tamarind soup base, tomato, onion, radish, eggplant, kangkong, water.",
+                "Boil pork until tender. Add tomato and onion. Add radish and souring mix. Add remaining vegetables and simmer until cooked.",
+                "Adjust the sourness to taste.");
 
         add("Pork", "Pork Menudo", "60 minutes",
-                "Pork, liver (optional), tomato sauce, potatoes, carrots, bell pepper, garlic, onion, water.",
-                "1. Sauté garlic and onion. 2. Brown pork. 3. Add tomato sauce and water. 4. Simmer until tender. 5. Add potatoes, carrots and bell pepper.",
-                "You can leave out liver if preferred.");
+                "Pork, tomato sauce, potatoes, carrots, bell pepper, garlic, onion, water. Liver optional.",
+                "Sauté garlic and onion. Brown pork. Add tomato sauce and water. Simmer until tender. Add potatoes, carrots and bell pepper.",
+                "Liver is optional.");
 
         add("Pork", "Bicol Express", "45 minutes",
                 "Pork, coconut milk, chili, shrimp paste, garlic, onion, ginger.",
-                "1. Sauté garlic, onion and ginger. 2. Add pork and cook until lightly browned. 3. Add coconut milk and simmer. 4. Stir in shrimp paste and chili. 5. Cook until tender.",
-                "Adjust chili to control the heat.");
+                "Sauté garlic, onion and ginger. Add pork and brown. Add coconut milk and simmer. Stir in shrimp paste and chili. Cook until tender.",
+                "Adjust chili to your preferred heat.");
 
-        // FILIPINO BEEF
+        // BEEF
         add("Beef", "Bistek Tagalog", "45 minutes",
-                "Beef slices, soy sauce, calamansi, onion rings, garlic, pepper, oil, water.",
-                "1. Marinate beef in soy sauce, calamansi and pepper. 2. Sauté onion rings and set aside. 3. Cook beef with garlic. 4. Add marinade and a little water. 5. Simmer and top with onions.",
+                "Beef slices, soy sauce, calamansi, onion rings, garlic, pepper, water.",
+                "Marinate beef in soy sauce, calamansi and pepper. Sauté onion rings and set aside. Cook beef with garlic. Add marinade and water. Simmer and top with onions.",
                 "Slice beef thinly across the grain.");
 
         add("Beef", "Beef Kare-Kare", "120 minutes",
-                "Beef or oxtail, peanut butter, ground toasted rice, eggplant, sitaw, pechay, onion, garlic, water.",
-                "1. Boil beef until tender. 2. Sauté garlic and onion. 3. Add broth, peanut butter and ground rice. 4. Simmer until thick. 5. Add cooked vegetables.",
+                "Beef or oxtail, peanut butter, ground toasted rice, eggplant, sitaw, pechay, garlic, onion.",
+                "Boil beef until tender. Sauté garlic and onion. Add broth, peanut butter and ground rice. Simmer until thick. Add cooked vegetables.",
                 "Serve with bagoong on the side.");
 
         add("Beef", "Bulalo", "180 minutes",
-                "Beef shank, corn, cabbage, pechay, onion, peppercorns, fish sauce, water.",
-                "1. Simmer beef shank in water until tender, skimming the broth. 2. Add onion and pepper. 3. Add corn. 4. Add cabbage and pechay near the end.",
-                "A pressure cooker can reduce cooking time.");
+                "Beef shank, corn, cabbage, pechay, onion, peppercorns, water.",
+                "Simmer beef shank until tender, skimming the broth. Add onion and pepper. Add corn. Add cabbage and pechay near the end.",
+                "A pressure cooker can shorten cooking time.");
 
         // FISH
         add("Fish", "Paksiw na Isda", "30 minutes",
                 "Fish, vinegar, garlic, ginger, onion, pepper, eggplant, water.",
-                "1. Arrange fish in a pot. 2. Add vinegar, garlic, ginger, onion, pepper and a little water. 3. Bring to a boil. 4. Simmer gently until fish is cooked.",
-                "Avoid stirring too much so the fish stays intact.");
+                "Arrange fish in a pot. Add vinegar, garlic, ginger, onion, pepper and water. Bring to a boil. Simmer gently until cooked.",
+                "Avoid stirring too much.");
 
         add("Fish", "Sinigang na Isda", "35 minutes",
                 "Fish, tamarind soup base, tomato, onion, radish, okra, kangkong, water.",
-                "1. Boil water with tomato and onion. 2. Add radish and souring mix. 3. Add fish carefully. 4. Simmer until cooked. 5. Add leafy vegetables last.",
-                "Choose a firm-fleshed fish.");
+                "Boil water with tomato and onion. Add radish and souring mix. Add fish carefully. Simmer until cooked. Add leafy vegetables last.",
+                "Choose firm-fleshed fish.");
 
         add("Fish", "Escabecheng Tilapia", "40 minutes",
-                "Tilapia, vinegar, sugar, carrot, bell pepper, onion, garlic, ginger, cornstarch (optional), oil.",
-                "1. Season and fry tilapia until cooked. 2. Sauté garlic, ginger, onion, carrot and bell pepper. 3. Add vinegar, sugar and water. 4. Simmer and pour over the fish.",
-                "Balance sweet and sour flavors to taste.");
+                "Tilapia, vinegar, sugar, carrot, bell pepper, onion, garlic, ginger, oil.",
+                "Season and fry tilapia. Sauté garlic, ginger, onion, carrot and bell pepper. Add vinegar, sugar and water. Simmer and pour over fish.",
+                "Balance sweet and sour flavors.");
 
         add("Fish", "Grilled Fish with Calamansi", "30 minutes",
-                "Whole fish or fillets, calamansi, garlic, salt, pepper, oil.",
-                "1. Clean and score whole fish if using. 2. Season with calamansi, garlic, salt and pepper. 3. Grill, turning carefully, until cooked.",
-                "Pat the fish dry before grilling.");
+                "Fish, calamansi, garlic, salt, pepper, oil.",
+                "Clean and season fish with calamansi, garlic, salt and pepper. Grill, turning carefully, until fully cooked.",
+                "Pat fish dry before grilling.");
 
         // SEAFOOD
         add("Seafood", "Garlic Butter Shrimp", "20 minutes",
-                "Shrimp, butter, garlic, calamansi or lemon, pepper, salt, parsley (optional).",
-                "1. Clean the shrimp. 2. Melt butter and sauté garlic. 3. Add shrimp and cook until pink and opaque. 4. Season and finish with calamansi.",
-                "Do not overcook shrimp.");
+                "Shrimp, butter, garlic, calamansi or lemon, salt, pepper.",
+                "Melt butter and sauté garlic. Add shrimp and cook until pink and opaque. Season and finish with calamansi.",
+                "Avoid overcooking shrimp.");
 
         add("Seafood", "Adobong Pusit", "35 minutes",
                 "Squid, vinegar, soy sauce, garlic, onion, tomato, pepper, bay leaf.",
-                "1. Clean squid and reserve ink if desired. 2. Sauté garlic, onion and tomato. 3. Add squid and seasonings. 4. Simmer until just tender.",
+                "Clean squid. Sauté garlic, onion and tomato. Add squid and seasonings. Simmer until just tender.",
                 "Squid can become tough if overcooked.");
 
         add("Seafood", "Sinigang na Hipon", "30 minutes",
                 "Shrimp, tamarind soup base, tomato, onion, radish, okra, kangkong, water.",
-                "1. Boil water with tomato and onion. 2. Add radish and souring mix. 3. Add shrimp and cook until pink. 4. Add okra and kangkong.",
-                "Add shrimp near the end to prevent overcooking.");
+                "Boil water with tomato and onion. Add radish and souring mix. Add shrimp and cook until pink. Add vegetables and simmer.",
+                "Add shrimp near the end.");
 
         add("Seafood", "Halabos na Hipon", "20 minutes",
-                "Shrimp, water, salt, garlic (optional), calamansi.",
-                "1. Rinse shrimp. 2. Place in a covered pan with a small amount of water and salt. 3. Steam until pink and cooked. 4. Serve with calamansi.",
-                "Shrimp releases its own juices as it cooks.");
+                "Shrimp, water, salt, calamansi.",
+                "Place shrimp in a covered pan with a small amount of water and salt. Steam until pink and fully cooked. Serve with calamansi.",
+                "Shrimp releases its own juices.");
 
         add("Seafood", "Ginataang Alimasag", "45 minutes",
-                "Crabs, coconut milk, garlic, onion, ginger, chili, salt, pepper.",
-                "1. Sauté garlic, onion and ginger. 2. Add crabs and coconut milk. 3. Simmer until crabs are fully cooked. 4. Add chili and season to taste.",
-                "Use fully cooked crabs with shells that have changed color.");
+                "Crab, coconut milk, garlic, onion, ginger, chili, salt, pepper.",
+                "Sauté garlic, onion and ginger. Add crab and coconut milk. Cover and cook thoroughly. Add chili and season to taste.",
+                "Cook crabs thoroughly.");
 
         add("Seafood", "Chili Garlic Crab", "35 minutes",
-                "Crab, garlic, chili, oil, butter, soy sauce, calamansi, a little water.",
-                "1. Clean and prepare crab. 2. Sauté garlic and chili. 3. Add crab and a little water. 4. Cover and cook thoroughly. 5. Season with soy sauce and calamansi.",
-                "Cooking time depends on the size of the crab.");
+                "Crab, garlic, chili, oil, butter, soy sauce, calamansi, water.",
+                "Sauté garlic and chili. Add crab and a little water. Cover and cook thoroughly. Season with soy sauce and calamansi.",
+                "Cooking time depends on crab size.");
 
         // VEGETABLES
         add("Vegetables", "Ginisang Monggo", "45 minutes",
-                "Mung beans, garlic, onion, tomato, malunggay or spinach, optional tinapa or pork, water.",
-                "1. Boil mung beans until soft. 2. Sauté garlic, onion and tomato. 3. Add cooked beans and broth. 4. Simmer. 5. Add greens at the end.",
-                "For a meat-free version, skip the pork and fish.");
+                "Mung beans, garlic, onion, tomato, malunggay or spinach, water.",
+                "Boil mung beans until soft. Sauté garlic, onion and tomato. Add beans and broth. Simmer and add greens at the end.",
+                "Skip meat for a meat-free version.");
 
         add("Vegetables", "Pinakbet", "35 minutes",
                 "Squash, eggplant, okra, sitaw, ampalaya, tomato, onion, garlic, bagoong, water.",
-                "1. Sauté garlic, onion and tomato. 2. Add bagoong and water. 3. Add firm vegetables first. 4. Add the remaining vegetables. 5. Cover and cook until tender.",
-                "Use the vegetables available in your area.");
+                "Sauté garlic, onion and tomato. Add bagoong and water. Add firm vegetables first, then remaining vegetables. Cover and cook until tender.",
+                "Use locally available vegetables.");
 
         add("Vegetables", "Chopsuey", "30 minutes",
-                "Cabbage, carrots, cauliflower, sayote, bell pepper, green beans, garlic, onion, broth, cornstarch (optional).",
-                "1. Sauté garlic and onion. 2. Add carrots and firm vegetables. 3. Add broth. 4. Add cabbage and bell pepper. 5. Cook until crisp-tender.",
+                "Cabbage, carrots, cauliflower, sayote, bell pepper, green beans, garlic, onion, broth.",
+                "Sauté garlic and onion. Add carrots and firm vegetables. Add broth. Add cabbage and bell pepper. Cook until crisp-tender.",
                 "Avoid overcooking the vegetables.");
 
         add("Vegetables", "Ginataang Kalabasa at Sitaw", "35 minutes",
-                "Squash, sitaw, coconut milk, garlic, onion, ginger, salt, pepper, optional shrimp.",
-                "1. Sauté garlic, onion and ginger. 2. Add squash and coconut milk. 3. Simmer until partly tender. 4. Add sitaw and cook until tender.",
-                "Add a little water if the coconut milk becomes too thick.");
+                "Squash, sitaw, coconut milk, garlic, onion, ginger, salt, pepper.",
+                "Sauté garlic, onion and ginger. Add squash and coconut milk. Simmer until partly tender. Add sitaw and cook until tender.",
+                "Add a little water if needed.");
 
         add("Vegetables", "Laing", "50 minutes",
-                "Dried taro leaves, coconut milk, garlic, onion, ginger, chili, shrimp paste (optional).",
-                "1. Simmer coconut milk with garlic, onion and ginger. 2. Add taro leaves without stirring too much at first. 3. Simmer gently until leaves are fully tender. 4. Season and add chili.",
-                "Cook taro leaves thoroughly; never eat them raw or undercooked.");
+                "Dried taro leaves, coconut milk, garlic, onion, ginger, chili.",
+                "Simmer coconut milk with garlic, onion and ginger. Add taro leaves and simmer gently until fully tender. Season and add chili.",
+                "Cook taro leaves thoroughly; do not eat them raw or undercooked.");
 
         add("Vegetables", "Tortang Talong", "30 minutes",
                 "Eggplant, eggs, salt, pepper, oil.",
-                "1. Grill or boil eggplant until soft. 2. Peel and flatten. 3. Dip in beaten egg seasoned with salt and pepper. 4. Pan-fry both sides until golden and cooked.",
-                "Add minced cooked meat if desired.");
+                "Grill or boil eggplant until soft. Peel and flatten. Dip in beaten seasoned egg. Pan-fry both sides until cooked.",
+                "Add cooked minced meat if desired.");
 
         add("Vegetables", "Adobong Sitaw", "25 minutes",
-                "Sitaw, garlic, onion, soy sauce, vinegar, pepper, water, optional tofu or pork.",
-                "1. Sauté garlic and onion. 2. Add sitaw and stir-fry. 3. Add soy sauce, vinegar, pepper and a little water. 4. Simmer until tender but still firm.",
-                "Add tofu for extra protein.");
+                "Sitaw, garlic, onion, soy sauce, vinegar, pepper, water.",
+                "Sauté garlic and onion. Add sitaw. Add soy sauce, vinegar, pepper and water. Simmer until tender but still firm.",
+                "Tofu can be added for protein.");
 
         add("Vegetables", "Ginisang Sayote", "20 minutes",
-                "Sayote, garlic, onion, tomato, oil, salt, pepper, a little water, optional egg or shrimp.",
-                "1. Sauté garlic, onion and tomato. 2. Add sliced sayote. 3. Add a little water and season. 4. Cover and cook until tender.",
-                "Wear gloves if sayote sap irritates your skin.");
+                "Sayote, garlic, onion, tomato, salt, pepper, oil, water.",
+                "Sauté garlic, onion and tomato. Add sliced sayote and a little water. Season, cover and cook until tender.",
+                "Peel and prepare sayote carefully.");
 
         add("Vegetables", "Ginisang Ampalaya", "25 minutes",
                 "Ampalaya, eggs, garlic, onion, tomato, salt, pepper, oil.",
-                "1. Slice ampalaya and remove seeds. 2. Sauté garlic, onion and tomato. 3. Add ampalaya and cook briefly. 4. Add beaten eggs and stir until set.",
-                "Remove some bitterness by briefly soaking sliced ampalaya in salted water.");
+                "Slice ampalaya and remove seeds. Sauté garlic, onion and tomato. Add ampalaya. Add beaten eggs and cook until set.",
+                "Soaking sliced ampalaya briefly in salted water may reduce bitterness.");
 
         add("Vegetables", "Lumpiang Gulay", "40 minutes",
                 "Lumpia wrappers, cabbage, carrots, bean sprouts, green beans, garlic, onion, oil.",
-                "1. Sauté garlic and onion. 2. Add vegetables and cook until just tender. 3. Cool the filling. 4. Wrap in lumpia wrappers. 5. Fry until crisp.",
-                "Drain the filling so the wrappers do not become soggy.");
+                "Sauté garlic and onion. Add vegetables and cook briefly. Cool the filling, wrap, and fry until crisp.",
+                "Drain the filling before wrapping.");
 
         add("Vegetables", "Ginataang Langka", "45 minutes",
-                "Unripe jackfruit, coconut milk, garlic, onion, ginger, chili, salt, optional shrimp paste.",
-                "1. Boil jackfruit until tender and drain. 2. Sauté garlic, onion and ginger. 3. Add jackfruit and coconut milk. 4. Simmer until flavors combine.",
+                "Young unripe jackfruit, coconut milk, garlic, onion, ginger, chili.",
+                "Boil jackfruit until tender and drain. Sauté garlic, onion and ginger. Add jackfruit and coconut milk. Simmer until flavorful.",
                 "Use young, unripe jackfruit.");
 
         add("Vegetables", "Ensaladang Talong", "25 minutes",
                 "Eggplant, tomato, onion, vinegar or calamansi, salt, pepper.",
-                "1. Grill or boil eggplant until soft. 2. Peel and chop. 3. Mix with tomato and onion. 4. Season with vinegar or calamansi, salt and pepper.",
-                "Serve as a side dish with grilled food.");
+                "Grill or boil eggplant until soft. Peel and chop. Mix with tomato and onion. Season with vinegar or calamansi.",
+                "Serve as a side dish.");
 
         add("Vegetables", "Ginisang Repolyo with Egg", "20 minutes",
                 "Cabbage, eggs, garlic, onion, carrot, oil, salt, pepper.",
-                "1. Sauté garlic and onion. 2. Add carrot and cabbage. 3. Stir-fry until tender-crisp. 4. Add beaten eggs and cook until set.",
-                "A quick, budget-friendly vegetable dish.");
+                "Sauté garlic and onion. Add carrot and cabbage. Stir-fry until tender-crisp. Add beaten eggs and cook until set.",
+                "An easy budget-friendly dish.");
 
         add("Vegetables", "Dinengdeng", "35 minutes",
-                "Saluyot or other leafy greens, squash, okra, eggplant, tomato, onion, bagoong, water, optional grilled fish.",
-                "1. Boil water with onion and tomato. 2. Add bagoong to taste. 3. Add firm vegetables first. 4. Add leafy greens last. 5. Simmer until cooked.",
-                "Vegetables vary by region and availability.");
+                "Saluyot or leafy greens, squash, okra, eggplant, tomato, onion, bagoong, water.",
+                "Boil water with onion and tomato. Add bagoong. Add firm vegetables first and leafy greens last. Simmer until cooked.",
+                "Vegetables vary by region.");
 
         add("Vegetables", "Garlic Green Beans", "15 minutes",
-                "Green beans, garlic, oil, salt, pepper, soy sauce (optional).",
-                "1. Trim green beans. 2. Heat oil and sauté garlic. 3. Add beans and stir-fry until crisp-tender. 4. Season to taste.",
-                "A simple international-style vegetable side.");
+                "Green beans, garlic, oil, salt, pepper, optional soy sauce.",
+                "Trim beans. Sauté garlic in oil. Add beans and stir-fry until crisp-tender. Season to taste.",
+                "A quick vegetable side dish.");
 
         add("Vegetables", "Roasted Mixed Vegetables", "35 minutes",
                 "Carrots, potatoes, broccoli, cauliflower, oil, garlic, salt, pepper.",
-                "1. Cut vegetables into similar-sized pieces. 2. Toss with oil, garlic and seasonings. 3. Roast at 200°C until tender and browned, turning once.",
+                "Cut vegetables evenly. Toss with oil, garlic and seasonings. Roast at 200°C until tender and browned, turning once.",
                 "Cooking time varies by vegetable size.");
 
         // RICE AND NOODLES
         add("Rice & Noodles", "Pancit Bihon", "35 minutes",
                 "Rice noodles, chicken or pork, cabbage, carrots, garlic, onion, soy sauce, broth.",
-                "1. Sauté garlic and onion. 2. Cook meat. 3. Add vegetables, broth and soy sauce. 4. Add softened bihon and toss until the liquid is absorbed.",
-                "Do not soak rice noodles for too long.");
+                "Sauté garlic and onion. Cook meat. Add vegetables, broth and soy sauce. Add softened bihon and toss until cooked.",
+                "Avoid soaking rice noodles too long.");
 
         add("Rice & Noodles", "Pancit Canton", "30 minutes",
                 "Canton noodles, chicken or pork, cabbage, carrots, green beans, garlic, onion, soy sauce, broth.",
-                "1. Sauté garlic and onion. 2. Cook meat and vegetables. 3. Add broth and seasonings. 4. Add noodles and toss until cooked.",
-                "Add broth gradually as needed.");
+                "Sauté garlic and onion. Cook meat and vegetables. Add broth and seasonings. Add noodles and toss until cooked.",
+                "Add broth gradually.");
 
         add("Rice & Noodles", "Arroz Caldo", "50 minutes",
-                "Rice, chicken, ginger, garlic, onion, fish sauce, water or broth, calamansi, spring onion.",
-                "1. Sauté ginger, garlic and onion. 2. Add chicken and rice. 3. Add broth or water. 4. Simmer, stirring, until rice becomes thick and soft. 5. Season and garnish.",
+                "Rice, chicken, ginger, garlic, onion, fish sauce, broth, calamansi, spring onion.",
+                "Sauté ginger, garlic and onion. Add chicken and rice. Add broth. Simmer, stirring, until rice is soft. Season and garnish.",
                 "Add hot water if it becomes too thick.");
 
         add("Rice & Noodles", "Garlic Fried Rice", "15 minutes",
-                "Cold cooked rice, garlic, oil, salt, spring onion (optional).",
-                "1. Break up cold rice. 2. Sauté garlic in oil. 3. Add rice and stir-fry until hot. 4. Season and garnish.",
-                "Day-old rice gives the best texture.");
+                "Cooked rice, garlic, oil, salt, spring onion.",
+                "Break up cold rice. Sauté garlic in oil. Add rice and stir-fry until hot. Season and garnish.",
+                "Refrigerate leftover rice promptly.");
 
-        // INTERNATIONAL CUISINE
+        // INTERNATIONAL
         add("International", "Japanese Chicken Teriyaki", "30 minutes",
-                "Chicken, soy sauce, sugar or honey, ginger, garlic, a little water, oil.",
-                "1. Cook chicken in a pan. 2. Mix soy sauce, sugar, ginger, garlic and water. 3. Pour into the pan. 4. Simmer until chicken is cooked and sauce thickens.",
-                "Serve with rice and steamed vegetables.");
+                "Chicken, soy sauce, sugar or honey, ginger, garlic, water, oil.",
+                "Cook chicken in a pan. Mix soy sauce, sugar, ginger, garlic and water. Add sauce and simmer until chicken is cooked and sauce thickens.",
+                "Serve with rice and vegetables.");
 
         add("International", "Japanese Vegetable Yakisoba", "25 minutes",
-                "Noodles, cabbage, carrots, onion, green beans, soy sauce, oyster sauce (optional), oil.",
-                "1. Cook noodles according to package instructions. 2. Stir-fry vegetables. 3. Add noodles and sauces. 4. Toss until heated through.",
-                "Use your favorite seasonal vegetables.");
+                "Noodles, cabbage, carrots, onion, green beans, soy sauce, oil.",
+                "Cook noodles. Stir-fry vegetables. Add noodles and sauce. Toss until heated through.",
+                "Use seasonal vegetables.");
 
         add("International", "Korean Bibimbap", "40 minutes",
-                "Cooked rice, carrots, spinach, mushrooms, bean sprouts, egg, soy sauce, sesame oil, gochujang (optional).",
-                "1. Cook rice. 2. Prepare each vegetable separately. 3. Fry or poach an egg. 4. Arrange vegetables and egg over rice. 5. Add sauce and mix before eating.",
-                "Use chili paste only if you enjoy spicy food.");
+                "Rice, carrots, spinach, mushrooms, bean sprouts, egg, soy sauce, sesame oil, optional gochujang.",
+                "Cook rice. Prepare vegetables separately. Cook an egg. Arrange toppings over rice. Add sauce and mix before eating.",
+                "Gochujang is optional.");
 
         add("International", "Korean Bulgogi-Style Beef", "35 minutes",
-                "Thin beef slices, soy sauce, garlic, sugar, onion, pepper, sesame oil (optional).",
-                "1. Mix soy sauce, garlic, sugar, onion and pepper. 2. Marinate beef. 3. Stir-fry over high heat until cooked. 4. Serve with rice.",
-                "Slice beef thinly for faster cooking.");
+                "Thin beef slices, soy sauce, garlic, sugar, onion, pepper.",
+                "Mix soy sauce, garlic, sugar, onion and pepper. Marinate beef. Stir-fry until fully cooked.",
+                "Slice beef thinly.");
 
         add("International", "Thai Vegetable Curry", "30 minutes",
-                "Mixed vegetables, coconut milk, curry paste, onion, garlic, oil, water.",
-                "1. Sauté onion and garlic. 2. Stir in curry paste. 3. Add coconut milk and vegetables. 4. Simmer until vegetables are tender.",
-                "Check curry paste ingredients and heat level.");
+                "Mixed vegetables, coconut milk, curry paste, onion, garlic, oil.",
+                "Sauté onion and garlic. Stir in curry paste. Add coconut milk and vegetables. Simmer until tender.",
+                "Check the curry paste's spice level.");
 
         add("International", "Chinese Stir-Fried Vegetables", "20 minutes",
-                "Broccoli, carrots, cabbage, mushrooms, garlic, soy sauce, oil, a little water.",
-                "1. Heat oil and sauté garlic. 2. Add firm vegetables first. 3. Add mushrooms and cabbage. 4. Add soy sauce and a splash of water. 5. Stir-fry until crisp-tender.",
-                "Keep the pan hot and avoid overcrowding.");
+                "Broccoli, carrots, cabbage, mushrooms, garlic, soy sauce, oil, water.",
+                "Sauté garlic. Add firm vegetables first. Add mushrooms and cabbage. Add soy sauce and a little water. Stir-fry until crisp-tender.",
+                "Avoid overcrowding the pan.");
 
         add("International", "Italian Tomato Pasta", "30 minutes",
-                "Pasta, tomatoes or tomato sauce, garlic, onion, olive oil, salt, pepper, basil (optional).",
-                "1. Cook pasta according to package instructions. 2. Sauté garlic and onion. 3. Add tomatoes or sauce and simmer. 4. Toss with pasta and season.",
-                "Save a little pasta water to loosen the sauce.");
+                "Pasta, tomatoes or tomato sauce, garlic, onion, oil, salt, pepper, optional basil.",
+                "Cook pasta. Sauté garlic and onion. Add tomatoes or sauce and simmer. Toss with pasta and season.",
+                "Save a little pasta water for the sauce.");
 
         add("International", "Indian Chickpea Curry", "35 minutes",
-                "Cooked chickpeas, tomato, onion, garlic, ginger, curry powder, coconut milk or water, oil.",
-                "1. Sauté onion, garlic and ginger. 2. Add curry powder and tomato. 3. Add chickpeas and coconut milk or water. 4. Simmer until thick and flavorful.",
-                "Serve with rice or flatbread.");
+                "Cooked chickpeas, tomato, onion, garlic, ginger, curry powder, coconut milk or water.",
+                "Sauté onion, garlic and ginger. Add curry powder and tomato. Add chickpeas and coconut milk or water. Simmer until thick.",
+                "Serve with rice.");
 
         add("International", "Vegetable Fried Rice", "20 minutes",
-                "Cooked rice, carrots, peas, corn, cabbage, egg (optional), garlic, soy sauce, oil.",
-                "1. Sauté garlic and vegetables. 2. Add rice and break up clumps. 3. Add soy sauce. 4. Stir-fry until hot. 5. Add cooked egg if desired.",
-                "Use leftover rice that has been refrigerated safely.");
+                "Cooked rice, carrots, peas, corn, cabbage, garlic, soy sauce, optional egg.",
+                "Sauté garlic and vegetables. Add rice and soy sauce. Stir-fry until hot. Add cooked egg if desired.",
+                "Use rice that has been stored safely.");
 
-        add("International", "Italian Spaghetti Bolognese", "45 minutes",
+        add("International", "Spaghetti Bolognese", "45 minutes",
                 "Spaghetti, ground beef, tomato sauce, onion, garlic, oil, salt, pepper, Italian herbs.",
-                "1. Cook spaghetti. 2. Sauté onion and garlic. 3. Brown ground beef. 4. Add tomato sauce and herbs. 5. Simmer and serve over pasta.",
-                "Simmer the sauce longer for a deeper flavor.");
+                "Cook spaghetti. Sauté onion and garlic. Brown beef. Add tomato sauce and herbs. Simmer and serve over pasta.",
+                "Simmer sauce for deeper flavor.");
     }
 
     private void add(String category, String name, String time,
@@ -334,7 +342,7 @@ public class MainActivity extends Activity {
     }
 
     private void setupPage(String heading) {
-        root = new LinearLayout(this);
+        LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(Color.rgb(250, 248, 242));
 
@@ -349,7 +357,7 @@ public class MainActivity extends Activity {
 
         TextView subtitle = new TextView(this);
         subtitle.setText(heading);
-        subtitle.setTextSize(17);
+        subtitle.setTextSize(18);
         subtitle.setTextColor(Color.DKGRAY);
         subtitle.setGravity(Gravity.CENTER);
         subtitle.setPadding(12, 0, 12, 16);
@@ -360,6 +368,7 @@ public class MainActivity extends Activity {
         content.setOrientation(LinearLayout.VERTICAL);
         content.setPadding(16, 8, 16, 24);
         scroll.addView(content);
+
         root.addView(scroll, new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
 
@@ -384,7 +393,8 @@ public class MainActivity extends Activity {
         button.setAllCaps(false);
         button.setTextSize(16);
         button.setBackgroundTintList(
-                android.content.res.ColorStateList.valueOf(Color.rgb(46, 125, 70)));
+                android.content.res.ColorStateList.valueOf(
+                        Color.rgb(46, 125, 70)));
         button.setTextColor(Color.WHITE);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -395,20 +405,32 @@ public class MainActivity extends Activity {
         button.setOnClickListener(v -> action.run());
     }
 
+    // HOME: all eight original feature columns
     private void showHome() {
         currentCategory = "";
+        lastScreen = "home";
         setupPage("Your everyday helper");
-        addText("ANONG ULAM?", 24, true);
-        addText("Discover Filipino favorites, seafood, vegetables and international dishes.", 16, false);
 
-        addButton("Find a Recipe", this::showFoodCategories);
-        addButton("Bantay Presyo", this::showPrices);
-        addButton("About Kasama Mo", this::showAbout);
+        addText("ANONG ULAM?", 24, true);
+        addText("Your songs, your food, your everyday helper.", 16, false);
+        addText("Choose a feature:", 17, true);
+
+        addButton("1. Ano'ng Ulam?", this::showFoodCategories);
+        addButton("2. Saan Papunta?", this::showDirections);
+        addButton("3. Gawa Dokumento", this::showDocumentMaker);
+        addButton("4. Scan to PDF", this::showScanner);
+        addButton("5. Send Files", this::showSendFiles);
+        addButton("6. Bantay Presyo", this::showPrices);
+        addButton("7. Nasaan Sila?", this::showLocationSharing);
+        addButton("8. Iwas Scam", this::showScamChecker);
     }
 
+    // FEATURE 1: RECIPES
     private void showFoodCategories() {
-        setupPage("Choose a food category");
-        addText("RECIPES", 22, true);
+        lastScreen = "categories";
+        setupPage("Ano'ng Ulam?");
+
+        addText("Filipino and international recipes", 16, false);
 
         String[] categories = {
                 "Chicken", "Pork", "Beef", "Fish", "Seafood",
@@ -416,142 +438,390 @@ public class MainActivity extends Activity {
         };
 
         for (String category : categories) {
-            int count = countRecipes(category);
-            addButton(category + " (" + count + " recipes)",
+            addButton(category + " (" + countRecipes(category) + ")",
                     () -> showCategory(category));
         }
 
-        addButton("Search All Recipes", this::showSearch);
+        addButton("Search Recipes", this::showSearch);
         addButton("Home", this::showHome);
     }
 
     private int countRecipes(String category) {
         int count = 0;
-        for (Recipe recipe : recipes) {
-            if (recipe.category.equals(category)) count++;
+        for (Recipe r : recipes) {
+            if (r.category.equals(category)) count++;
         }
         return count;
     }
 
     private void showCategory(String category) {
         currentCategory = category;
+        lastScreen = "category";
         setupPage(category + " Recipes");
 
-        List<Recipe> found = new ArrayList<>();
-        for (Recipe recipe : recipes) {
-            if (recipe.category.equals(category)) found.add(recipe);
-        }
-
-        addText(found.size() + " recipes available", 15, false);
-
-        for (Recipe recipe : found) {
-            addButton(recipe.name + "  •  " + recipe.time,
-                    () -> showRecipe(recipe));
-        }
-
-        addButton("Back to Categories", this::showFoodCategories);
-        addButton("Home", this::showHome);
-    }
-
-    private void showSearch() {
-        setupPage("Search Recipes");
-        addText("Type a dish name or ingredient.", 16, false);
-
-        EditText search = new EditText(this);
-        search.setSingleLine(true);
-        search.setHint("Example: shrimp, eggplant, pasta");
-        content.addView(search);
-
-        addButton("Search", () -> {
-            searchText = search.getText().toString().trim()
-                    .toLowerCase(Locale.ROOT);
-
-            if (searchText.isEmpty()) {
-                Toast.makeText(this, "Enter a dish or ingredient.",
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            showSearchResults(searchText);
-        });
-
-        addButton("Back to Categories", this::showFoodCategories);
-        addButton("Home", this::showHome);
-    }
-
-    private void showSearchResults(String query) {
-        setupPage("Search Results");
-        int count = 0;
-
-        for (Recipe recipe : recipes) {
-            String searchable = (recipe.name + " " + recipe.category + " "
-                    + recipe.ingredients).toLowerCase(Locale.ROOT);
-
-            if (searchable.contains(query)) {
-                count++;
-                addButton(recipe.name + " • " + recipe.category,
-                        () -> showRecipe(recipe));
+        for (Recipe r : recipes) {
+            if (r.category.equals(category)) {
+                addButton(r.name + " • " + r.time, () -> showRecipe(r));
             }
         }
 
-        if (count == 0) {
-            addText("No recipes found for \"" + query + "\".", 16, false);
-            addText("Try another dish name or ingredient.", 14, false);
-        } else {
-            addText(count + " matching recipes", 15, false);
-        }
-
-        addButton("Search Again", this::showSearch);
         addButton("Back to Categories", this::showFoodCategories);
         addButton("Home", this::showHome);
     }
 
-    private void showRecipe(Recipe recipe) {
-        setupPage(recipe.name);
+    private void showRecipe(Recipe r) {
+        lastScreen = "recipe";
+        setupPage(r.name);
 
-        addText("Category: " + recipe.category, 15, true);
-        addText("Estimated time: " + recipe.time, 16, false);
-
+        addText("Category: " + r.category, 15, true);
+        addText("Estimated time: " + r.time, 16, false);
         addText("INGREDIENTS", 20, true);
-        addText(recipe.ingredients, 16, false);
-
+        addText(r.ingredients, 16, false);
         addText("COOKING INSTRUCTIONS", 20, true);
-        addText(recipe.steps, 16, false);
-
+        addText(r.steps, 16, false);
         addText("KASAMA MO TIP", 20, true);
-        addText(recipe.tip, 16, false);
+        addText(r.tip, 16, false);
+        addText("Cooking times are estimates. Cook meat, fish and seafood thoroughly.",
+                14, false);
 
-        addText("Cooking times are estimates. Make sure meat, fish and seafood are fully cooked.", 14, false);
-
-        addButton("Back to " + recipe.category,
-                () -> showCategory(recipe.category));
+        addButton("Back to " + r.category, () -> showCategory(r.category));
         addButton("All Categories", this::showFoodCategories);
         addButton("Home", this::showHome);
     }
 
-    private void showPrices() {
-        setupPage("Bantay Presyo");
-        addText("BANTAY PRESYO", 23, true);
-        addText("This starter version does not yet connect to verified live market prices.", 16, false);
-        addText("For now, compare prices at your local public market and grocery stores before buying.", 16, false);
-        addText("A future version can include market locations, price updates and the date each price was checked.", 16, false);
+    private void showSearch() {
+        lastScreen = "search";
+        setupPage("Search Recipes");
+
+        EditText input = new EditText(this);
+        input.setHint("Dish or ingredient");
+        content.addView(input);
+
+        addButton("Search", () -> {
+            String query = input.getText().toString().trim()
+                    .toLowerCase(Locale.ROOT);
+            if (query.isEmpty()) {
+                input.setError("Enter a dish or ingredient");
+                return;
+            }
+            showSearchResults(query);
+        });
+
         addButton("Home", this::showHome);
     }
 
-    private void showAbout() {
-        setupPage("About Kasama Mo");
-        addText("Kasama Mo", 24, true);
-        addText("Your everyday helper.", 18, false);
-        addText("This version includes Filipino chicken, pork, beef, fish, seafood, vegetable, rice and noodle recipes, plus international dishes.", 16, false);
-        addText("Recipe quantities are not yet standardized for serving sizes. Adjust ingredients to your needs and check for allergies.", 15, false);
-        addButton("Explore Recipes", this::showFoodCategories);
+    private void showSearchResults(String query) {
+        lastScreen = "searchResults";
+        setupPage("Recipe Search Results");
+        int count = 0;
+
+        for (Recipe r : recipes) {
+            String searchable = (r.name + " " + r.category + " "
+                    + r.ingredients).toLowerCase(Locale.ROOT);
+            if (searchable.contains(query)) {
+                count++;
+                addButton(r.name + " • " + r.category, () -> showRecipe(r));
+            }
+        }
+
+        if (count == 0) addText("No matching recipes found.", 16, false);
+        else addText(count + " matching recipes", 15, false);
+
+        addButton("Search Again", this::showSearch);
+        addButton("Home", this::showHome);
+    }
+
+    // FEATURE 2: MAPS
+    private void showDirections() {
+        lastScreen = "directions";
+        setupPage("Saan Papunta?");
+        addText("Find a place using a map app.", 16, false);
+
+        EditText place = new EditText(this);
+        place.setHint("Place or address");
+        place.setSingleLine(true);
+        content.addView(place);
+
+        addButton("Find on Map", () -> {
+            String query = place.getText().toString().trim();
+            if (query.isEmpty()) {
+                place.setError("Enter a destination");
+                return;
+            }
+
+            Uri uri = Uri.parse("https://www.google.com/maps/search/?api=1&query="
+                    + Uri.encode(query));
+            startActivity(new Intent(Intent.ACTION_VIEW, uri));
+        });
+
+        addButton("Home", this::showHome);
+    }
+
+    // FEATURE 3: DOCUMENT WRITER
+    private void showDocumentMaker() {
+        lastScreen = "document";
+        setupPage("Gawa Dokumento");
+
+        EditText title = new EditText(this);
+        title.setHint("Document title");
+        content.addView(title);
+
+        EditText body = new EditText(this);
+        body.setHint("Write your document here");
+        body.setMinLines(6);
+        body.setGravity(Gravity.TOP);
+        content.addView(body);
+
+        addButton("Share Document Text", () -> {
+            String text = body.getText().toString().trim();
+            if (text.isEmpty()) {
+                body.setError("Write something first");
+                return;
+            }
+
+            Intent share = new Intent(Intent.ACTION_SEND);
+            share.setType("text/plain");
+            share.putExtra(Intent.EXTRA_SUBJECT,
+                    title.getText().toString().trim());
+            share.putExtra(Intent.EXTRA_TEXT, text);
+            startActivity(Intent.createChooser(share, "Share document"));
+        });
+
+        addText("This version shares document text. Exporting formatted DOCX or PDF requires an additional document generator.",
+                14, false);
+        addButton("Home", this::showHome);
+    }
+
+    // FEATURE 4: PDF PICKER
+    private void showScanner() {
+        lastScreen = "scanner";
+        setupPage("Scan to PDF");
+
+        addText("Choose an existing PDF, or open a scanning app if one is installed.",
+                16, false);
+        addText("This starter screen does not yet capture pages with its own camera scanner.",
+                14, false);
+
+        addButton("Choose Existing PDF", () -> {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.setType("application/pdf");
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            startActivityForResult(intent, 402);
+        });
+
+        addButton("Open Camera", () -> {
+            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "No camera app available.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        addButton("Home", this::showHome);
+    }
+
+    // FEATURE 5: FILE SHARING
+    private void showSendFiles() {
+        lastScreen = "sendFiles";
+        setupPage("Send Files");
+
+        addText("Choose a file from your device and share it through an installed app.",
+                16, false);
+
+        addButton("Choose a File", () -> {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.setType("*/*");
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            startActivityForResult(intent, 501);
+        });
+
+        addButton("Home", this::showHome);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode != RESULT_OK || data == null
+                || data.getData() == null) return;
+
+        Uri uri = data.getData();
+
+        if (requestCode == 501) {
+            Intent share = new Intent(Intent.ACTION_SEND);
+            share.setType("*/*");
+            share.putExtra(Intent.EXTRA_STREAM, uri);
+            share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(Intent.createChooser(share, "Send file"));
+        } else if (requestCode == 402) {
+            Intent share = new Intent(Intent.ACTION_SEND);
+            share.setType("application/pdf");
+            share.putExtra(Intent.EXTRA_STREAM, uri);
+            share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(Intent.createChooser(share, "Share PDF"));
+        }
+    }
+
+    // FEATURE 6: PRICE COMPARISON
+    private void showPrices() {
+        lastScreen = "prices";
+        setupPage("Bantay Presyo");
+
+        addText("Enter prices you see in stores or markets to compare them.",
+                16, false);
+        addText("Prices are user-entered. This version does not fetch verified live market prices.",
+                14, false);
+
+        EditText item = new EditText(this);
+        item.setHint("Product name and size (e.g. rice, 1 kg)");
+        content.addView(item);
+
+        EditText store = new EditText(this);
+        store.setHint("Store or market name");
+        content.addView(store);
+
+        EditText price = new EditText(this);
+        price.setHint("Price in pesos");
+        price.setInputType(InputType.TYPE_CLASS_NUMBER
+                | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        content.addView(price);
+
+        addButton("Add Price", () -> {
+            String product = item.getText().toString().trim();
+            String shop = store.getText().toString().trim();
+            String value = price.getText().toString().trim();
+
+            if (product.isEmpty() || shop.isEmpty() || value.isEmpty()) {
+                Toast.makeText(this, "Complete all fields.",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            try {
+                double amount = Double.parseDouble(value);
+                if (amount < 0) {
+                    price.setError("Enter a valid price");
+                    return;
+                }
+
+                prices.add(new PriceEntry(product, shop, amount));
+                showPrices();
+            } catch (NumberFormatException e) {
+                price.setError("Enter a valid price");
+            }
+        });
+
+        addText("YOUR PRICE LIST", 19, true);
+
+        if (prices.isEmpty()) {
+            addText("No prices added yet.", 15, false);
+        } else {
+            for (PriceEntry p : prices) {
+                addText(p.item + "\n" + p.store + " — "
+                        + String.format(Locale.getDefault(), "₱%.2f", p.price),
+                        16, true);
+            }
+        }
+
+        addButton("Clear Price List", () -> {
+            prices.clear();
+            showPrices();
+        });
+
+        addButton("Home", this::showHome);
+    }
+
+    // FEATURE 7: CONSENT-BASED LOCATION SHARING
+    private void showLocationSharing() {
+        lastScreen = "location";
+        setupPage("Nasaan Sila?");
+
+        addText("Share your location through a map or messaging app.",
+                16, false);
+        addText("This version does not track other people or show their live locations.",
+                14, false);
+
+        addButton("Open Map", () -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("geo:0,0?q="));
+            startActivity(intent);
+        });
+
+        addButton("Share Location Link", () -> {
+            Intent share = new Intent(Intent.ACTION_SEND);
+            share.setType("text/plain");
+            share.putExtra(Intent.EXTRA_TEXT,
+                    "Please share your location with me using a trusted map or messaging app.");
+            startActivity(Intent.createChooser(share, "Share location request"));
+        });
+
+        addButton("Home", this::showHome);
+    }
+
+    // FEATURE 8: BASIC SCAM WARNING CHECKER
+    private void showScamChecker() {
+        lastScreen = "scam";
+        setupPage("Iwas Scam");
+
+        addText("Paste a suspicious message or link to check for common warning signs.",
+                16, false);
+
+        EditText message = new EditText(this);
+        message.setHint("Paste message or link here");
+        message.setMinLines(4);
+        message.setGravity(Gravity.TOP);
+        content.addView(message);
+
+        addButton("Check Warning Signs", () -> {
+            String text = message.getText().toString().toLowerCase(Locale.ROOT);
+
+            if (text.trim().isEmpty()) {
+                message.setError("Paste a message first");
+                return;
+            }
+
+            boolean warning =
+                    text.contains("send otp")
+                    || text.contains("one-time password")
+                    || text.contains("password")
+                    || text.contains("claim your prize")
+                    || text.contains("you won")
+                    || text.contains("urgent")
+                    || text.contains("verify your account")
+                    || text.contains("send money")
+                    || text.contains("click here")
+                    || text.contains("bank account");
+
+            setupPage("Iwas Scam — Result");
+
+            if (warning) {
+                addText("CAUTION: Possible warning signs found.", 20, true);
+                addText("Do not share passwords, OTPs or money. Verify the sender independently using official contact details.",
+                        16, false);
+            } else {
+                addText("No listed warning signs detected.", 20, true);
+                addText("This does not prove the message is safe. Check the sender and link independently.",
+                        16, false);
+            }
+
+            addButton("Check Another Message", this::showScamChecker);
+            addButton("Home", this::showHome);
+        });
+
         addButton("Home", this::showHome);
     }
 
     @Override
     public void onBackPressed() {
-        if (!currentCategory.isEmpty()) {
-            showCategory(currentCategory);
+        if ("recipe".equals(lastScreen)) {
+            if (!currentCategory.isEmpty()) {
+                showCategory(currentCategory);
+            } else {
+                showFoodCategories();
+            }
         } else {
             showHome();
         }
